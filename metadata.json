@@ -1,0 +1,8 @@
+{
+  "name": "Catálogo La Gusguera con Panel de Cocina",
+  "description": "Catálogo Interactivo con carrito, cocina en tiempo real y panel de gerencia, precios, inventario y despachos domicilio.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

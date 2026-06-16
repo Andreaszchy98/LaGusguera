@@ -1,0 +1,74 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Default-deny catch-all safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Order validations
+    function isValidOrder(data) {
+      return data.keys().hasAll(['folio', 'clientName', 'deliveryType', 'items', 'total', 'status', 'createdAt', 'updatedAt'])
+        && data.keys().size() <= 12
+        && data.folio is int
+        && data.folio >= 0
+        && data.clientName is string
+        && data.clientName.size() <= 100
+        && data.deliveryType is string
+        && (data.deliveryType == 'recoger' || data.deliveryType == 'domicilio')
+        && data.items is list
+        && data.items.size() > 0
+        && data.items.size() <= 50
+        && data.total is number
+        && data.total >= 0
+        && data.status is string
+        && (data.status == 'nuevo' || data.status == 'preparando' || data.status == 'listo' || data.status == 'completado');
+    }
+
+    // Orders Collection
+    match /orders/{orderId} {
+      allow read: if true;
+      
+      // Allow customers to create validated orders
+      allow create: if isValidId(orderId) 
+        && isValidOrder(incoming())
+        && incoming().status == 'nuevo';
+        
+      // Allow cooks & admins to update order statuses
+      allow update: if isValidId(orderId)
+        && isValidOrder(incoming())
+        && (
+          // Allow full modification if needed or state changes
+          incoming().status != existing().status
+          || incoming().items == existing().items
+        );
+        
+      allow delete: if false; // Pedidos never deleted, only marked completado
+    }
+
+    // Config validations
+    function isValidConfig(data) {
+      return data.keys().size() <= 15;
+    }
+
+    // Config Collection
+    match /config/{configId} {
+      allow read: if true;
+      allow create, update: if isValidId(configId) && isValidConfig(incoming());
+      allow delete: if false;
+    }
+  }
+}

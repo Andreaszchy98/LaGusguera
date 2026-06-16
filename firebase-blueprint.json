@@ -1,0 +1,94 @@
+{
+  "entities": {
+    "Order": {
+      "title": "Order",
+      "description": "Represents an order placed by a customer",
+      "type": "object",
+      "properties": {
+        "folio": {
+          "type": "integer",
+          "description": "Unique order sequence number"
+        },
+        "clientName": {
+          "type": "string",
+          "description": "Name of the customer placing the order"
+        },
+        "deliveryType": {
+          "type": "string",
+          "enum": ["recoger", "domicilio"],
+          "description": "Type of delivery (pickup or home delivery)"
+        },
+        "address": {
+          "type": "string",
+          "description": "Optional street address for home deliveries"
+        },
+        "phone": {
+          "type": "string",
+          "description": "Contact phone number for the order"
+        },
+        "items": {
+          "type": "array",
+          "description": "List of dishes and snacks ordered"
+        },
+        "total": {
+          "type": "number",
+          "description": "Total payment amount in MXN"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["nuevo", "preparando", "listo", "completado"],
+          "description": "Current preparation status"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the order was created"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the order was last updated"
+        }
+      },
+      "required": ["folio", "clientName", "deliveryType", "items", "total", "status", "createdAt", "updatedAt"]
+    },
+    "Config": {
+      "title": "Config",
+      "description": "Global settings for menu prices, inventory levels, promotions, and consecutives",
+      "type": "object",
+      "properties": {
+        "prices": {
+          "type": "object",
+          "description": "Map of product IDs to override prices"
+        },
+        "activeStatus": {
+          "type": "object",
+          "description": "Map of product IDs to availability status"
+        },
+        "forceMartesAlitas": {
+          "type": "string",
+          "enum": ["auto", "active", "inactive"],
+          "description": "Control flag for Tuesday Wings promo"
+        },
+        "nextFolio": {
+          "type": "number",
+          "description": "Next consecutive number for orders"
+        },
+        "inventory": {
+          "type": "object",
+          "description": "Map of key ingredients to current stock count"
+        }
+      }
+    }
+  },
+  "firestore": {
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Collection of all customer orders"
+    },
+    "/config/{configId}": {
+      "schema": "Config",
+      "description": "Settings, inventory and folios collection"
+    }
+  }
+}
