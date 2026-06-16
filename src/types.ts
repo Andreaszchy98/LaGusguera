@@ -7,7 +7,7 @@ export interface Product {
   id: string;
   name: string;
   price: number;
-  category: "hamburguesas" | "snacks" | "combos";
+  category: "hamburguesas" | "antojos" | "papas" | "combos";
   description: string;
   image?: string;
   ingredients?: string[];

@@ -43,7 +43,7 @@ interface ClientViewProps {
 export default function ClientView({ onGoToStaff }: ClientViewProps) {
   const [products, setProducts] = useState<Product[]>(DEFAULT_PRODUCTS);
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<"todos" | "hamburguesas" | "snacks" | "combos">("todos");
+  const [selectedCategory, setSelectedCategory] = useState<"todos" | "hamburguesas" | "antojos" | "papas" | "combos">("todos");
   const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
   const [showCheckoutModal, setShowCheckoutModal] = useState<boolean>(false);
   
@@ -251,7 +251,7 @@ export default function ClientView({ onGoToStaff }: ClientViewProps) {
       id: MARTES_ALITAS_PROMO.id,
       name: MARTES_ALITAS_PROMO.name,
       price: MARTES_ALITAS_PROMO.price,
-      category: "snacks",
+      category: "antojos",
       description: MARTES_ALITAS_PROMO.description,
       isAvailable: true,
       image: "https://images.unsplash.com/photo-1608039829572-78524f79c4c7?auto=format&fit=crop&q=80&w=600"
@@ -347,10 +347,11 @@ export default function ClientView({ onGoToStaff }: ClientViewProps) {
       
       waMessage += `\n*DETALLE DE LA ORDEN:*\n`;
       cart.forEach(item => {
-        waMessage += ` *${item.quantity}x* ${item.product.name}\n`;
+        waMessage += ` *${item.quantity}x* ${item.product.name}`;
         if (item.notes && item.notes.trim()) {
-          waMessage += `   _Nota: ${item.notes.trim()}_\n`;
+          waMessage += ` (${item.notes.trim()})`;
         }
+        waMessage += `\n`;
       });
 
       const encodedMessage = encodeURIComponent(waMessage);
@@ -450,8 +451,9 @@ export default function ClientView({ onGoToStaff }: ClientViewProps) {
             {[
               { id: "todos", label: "✨ Todo el Menú" },
               { id: "hamburguesas", label: "🍔 Hamburguesas" },
-              { id: "snacks", label: "🍟 Snacks y Más" },
-              { id: "combos", label: "📦 Combos Crujientes" }
+              { id: "antojos", label: "😋 Antojos" },
+              { id: "papas", label: "🍟 Papas" },
+              { id: "combos", label: "📦 Combos" }
             ].map(cat => (
               <button
                 key={cat.id}
@@ -573,7 +575,7 @@ export default function ClientView({ onGoToStaff }: ClientViewProps) {
                     />
                     <div className="absolute top-3 left-3 flex flex-wrap gap-1.55">
                       <span className="yellow-bg navy-text text-[10px] font-black uppercase px-2 py-1 border border-navy-deep shadow-[2px_2px_0px_0px_rgba(26,43,75,1)]">
-                        ⭐ {selectedDetailProduct.category === "hamburguesas" ? "Hamburguesas" : selectedDetailProduct.category === "combos" ? "Combos" : "Snacks / Antojos"}
+                        ⭐ {selectedDetailProduct.category === "hamburguesas" ? "Hamburguesas" : selectedDetailProduct.category === "combos" ? "Combos" : selectedDetailProduct.category === "papas" ? "Papas" : "Antojos"}
                       </span>
                     </div>
                   </div>
